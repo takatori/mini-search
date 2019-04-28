@@ -6,7 +6,7 @@ import (
 
 const (
 	BEGINNING_OF_FILE = -math.MaxInt32
-	END_OF_FILE = math.MaxInt32
+	END_OF_FILE       = math.MaxInt32
 )
 
 // schema independent index
@@ -30,7 +30,7 @@ func (index *Index) last(t string) int {
 	if postingList, ok := index.Dictionary[t]; !ok {
 		return 0
 	} else {
-		return postingList[len(postingList) - 1]
+		return postingList[len(postingList)-1]
 	}
 }
 
@@ -55,7 +55,7 @@ func (index *Index) prev(t string, current int) int {
 	if postingList, ok := index.Dictionary[t]; !ok {
 		return 0
 	} else {
-		for i := len(postingList) -1; i >= 0; i-- {
+		for i := len(postingList) - 1; i >= 0; i-- {
 			p := postingList[i]
 			if p < current {
 				return p
@@ -64,6 +64,29 @@ func (index *Index) prev(t string, current int) int {
 		return BEGINNING_OF_FILE
 	}
 
+}
+
+// function to locate the first occurrence of a phrase after a given position
+func (index *Index) nextPhrase(phrase []string, current int) (int, int) {
+
+	length := len(phrase)
+
+	v := current
+	for _, t := range phrase {
+		v = index.next(t, v)
+	}
+	if v == END_OF_FILE {
+		return END_OF_FILE, END_OF_FILE
+	}
+	u := v
+	for i := length - 2; i >= 0; i-- {
+		u = index.prev(phrase[i], u)
+	}
+	if v-u == length-1 {
+		return u, v
+	} else {
+		return index.nextPhrase(phrase, u)
+	}
 }
 
 func NewIndex(dictionary map[string][]int) *Index {

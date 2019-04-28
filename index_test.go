@@ -68,10 +68,10 @@ func TestNext(t *testing.T) {
 	}
 
 
-	for _, textCase := range testCases {
-		actual := index.next(textCase.t, textCase.current)
-		if actual != textCase.expected {
-			t.Errorf("\n got: %v\n want: %v", actual, textCase.expected)
+	for _, testCase := range testCases {
+		actual := index.next(testCase.t, testCase.current)
+		if actual != testCase.expected {
+			t.Errorf("\n got: %v\n want: %v", actual, testCase.expected)
 		}
 	}
 
@@ -101,10 +101,40 @@ func TestPrev(t *testing.T) {
 	}
 
 
-	for _, textCase := range testCases {
-		actual := index.prev(textCase.t, textCase.current)
-		if actual != textCase.expected {
-			t.Errorf("\n got: %v\n want: %v", actual, textCase.expected)
+	for _, testCase := range testCases {
+		actual := index.prev(testCase.t, testCase.current)
+		if actual != testCase.expected {
+			t.Errorf("\n got: %v\n want: %v", actual, testCase.expected)
+		}
+	}
+
+}
+
+
+func TestNextPhrase(t *testing.T) {
+
+	index := NewIndex(map[string][]int{
+		"first": {2205, 2268, 745406, 745466, 745501, 1271487},
+		"witch": {1598, 27555, 745407, 745429, 745451, 745467, 745502, 1245276},
+	})
+
+	type test struct{
+		t             []string
+		current       int
+		expectedStart int
+		expectedEnd   int
+	}
+
+	testCases := []test{
+		{[]string{"first", "witch"}, BEGINNING_OF_FILE,745406, 745407},
+		{[]string{"first", "witch"}, 745500,745501, 745502},
+	}
+
+
+	for _, testCase := range testCases {
+		u, v := index.nextPhrase(testCase.t, testCase.current)
+		if u != testCase.expectedStart || v != testCase.expectedEnd {
+			t.Errorf("\n got: [%v, %v]\n want: [%v, %v]", u, v, testCase.expectedStart, testCase.expectedEnd)
 		}
 	}
 
