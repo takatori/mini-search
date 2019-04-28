@@ -48,14 +48,14 @@ func TestNext(t *testing.T) {
 
 	index := NewIndex(map[string][]int{
 		"hurlyburly": {316669, 745434},
-		"thunder":  {36898, 137236, 745397, 745419, 1247139},
-		"witch": {1598, 27555, 745407, 745429, 745451, 745467, 1245276},
-		"witching": {265197},
+		"thunder":    {36898, 137236, 745397, 745419, 1247139},
+		"witch":      {1598, 27555, 745407, 745429, 745451, 745467, 1245276},
+		"witching":   {265197},
 	})
 
-	type test struct{
-		t string
-		current int
+	type test struct {
+		t        string
+		current  int
 		expected int
 	}
 
@@ -66,7 +66,6 @@ func TestNext(t *testing.T) {
 		{"witch", BEGINNING_OF_FILE, 1598},
 		{"witch", END_OF_FILE, END_OF_FILE},
 	}
-
 
 	for _, testCase := range testCases {
 		actual := index.next(testCase.t, testCase.current)
@@ -81,25 +80,24 @@ func TestPrev(t *testing.T) {
 
 	index := NewIndex(map[string][]int{
 		"hurlyburly": {316669, 745434},
-		"thunder":  {36898, 137236, 745397, 745419, 1247139},
-		"witch": {1598, 27555, 745407, 745429, 745451, 745467, 1245276},
-		"witching": {265197},
+		"thunder":    {36898, 137236, 745397, 745419, 1247139},
+		"witch":      {1598, 27555, 745407, 745429, 745451, 745467, 1245276},
+		"witching":   {265197},
 	})
 
-	type test struct{
-		t string
-		current int
+	type test struct {
+		t        string
+		current  int
 		expected int
 	}
 
 	testCases := []test{
-		{"witch", 745451,745429},
+		{"witch", 745451, 745429},
 		{"hurlyburly", 456789, 316669},
 		{"witch", 1598, BEGINNING_OF_FILE},
 		{"witch", END_OF_FILE, 1245276},
 		{"witch", BEGINNING_OF_FILE, BEGINNING_OF_FILE},
 	}
-
 
 	for _, testCase := range testCases {
 		actual := index.prev(testCase.t, testCase.current)
@@ -110,7 +108,6 @@ func TestPrev(t *testing.T) {
 
 }
 
-
 func TestNextPhrase(t *testing.T) {
 
 	index := NewIndex(map[string][]int{
@@ -118,7 +115,7 @@ func TestNextPhrase(t *testing.T) {
 		"witch": {1598, 27555, 745407, 745429, 745451, 745467, 745502, 1245276},
 	})
 
-	type test struct{
+	type test struct {
 		t             []string
 		current       int
 		expectedStart int
@@ -126,10 +123,9 @@ func TestNextPhrase(t *testing.T) {
 	}
 
 	testCases := []test{
-		{[]string{"first", "witch"}, BEGINNING_OF_FILE,745406, 745407},
-		{[]string{"first", "witch"}, 745500,745501, 745502},
+		{[]string{"first", "witch"}, BEGINNING_OF_FILE, 745406, 745407},
+		{[]string{"first", "witch"}, 745500, 745501, 745502},
 	}
-
 
 	for _, testCase := range testCases {
 		u, v := index.nextPhrase(testCase.t, testCase.current)
@@ -140,3 +136,35 @@ func TestNextPhrase(t *testing.T) {
 
 }
 
+func TestAllPhrase(t *testing.T) {
+
+	index := NewIndex(map[string][]int{
+		"first": {2205, 2268, 745406, 745466, 745501, 1271487},
+		"witch": {1598, 27555, 745407, 745429, 745451, 745467, 745502, 1245276},
+	})
+
+	type test struct {
+		t        []string
+		current  int
+		expected [][]int
+	}
+
+	testCases := []test{
+		{[]string{"first", "witch"},
+			BEGINNING_OF_FILE,
+			[][]int{
+				{745406, 745407},
+				{745466, 745467},
+				{745501, 745502},
+			},
+		},
+	}
+	for _, testCase := range testCases {
+		results := index.allPhrase(testCase.t, testCase.current)
+		for i, result := range results {
+			if result[0] != testCase.expected[i][0] || result[1] != testCase.expected[i][1] {
+				t.Errorf("\n got: %v\n want: %v", result, testCase.expected[i])
+			}
+		}
+	}
+}

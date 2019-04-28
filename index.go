@@ -89,6 +89,23 @@ func (index *Index) nextPhrase(phrase []string, current int) (int, int) {
 	}
 }
 
+func (index *Index) allPhrase(phrase []string, current int) [][2]int {
+
+	var results [][2]int
+	var u int
+	var v int
+
+	u = current
+
+	for u < END_OF_FILE {
+		u, v = index.nextPhrase(phrase, u)
+		if u != END_OF_FILE {
+			results = append(results, [2]int{u, v})
+		}
+	}
+	return results
+}
+
 func NewIndex(dictionary map[string][]int) *Index {
 	index := new(Index)
 	index.Dictionary = dictionary
