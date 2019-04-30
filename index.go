@@ -37,16 +37,42 @@ func (index *Index) last(t string) int {
 // next(t, current) returns the position of t's first occurrence after the current position
 func (index *Index) next(t string, current int) int {
 
-	if postingList, ok := index.Dictionary[t]; !ok {
-		return 0
-	} else {
-		for _, p := range postingList {
-			if p > current {
-				return p
-			}
-		}
+	var p []int
+	var ok bool
+
+	if p, ok = index.Dictionary[t]; !ok {
 		return END_OF_FILE
 	}
+
+	length := len(p)
+
+	if length == 0 || p[length-1] <= current {
+		return END_OF_FILE
+	}
+
+	if p[0] > current {
+		return p[0]
+	}
+
+	return p[index.binarySearch(t, 0, length-1, current)]
+
+}
+
+func (index *Index) binarySearch(t string, low, high, current int) int {
+
+	for high-low > 1 {
+		mid := (low + high) / 2
+		if p, ok := index.Dictionary[t]; !ok {
+			return END_OF_FILE
+		} else {
+			if p[mid] <= current {
+				low = mid
+			} else {
+				high = mid
+			}
+		}
+	}
+	return high
 }
 
 // prev(t, current) returns the position of t's last occurrence before the current position
