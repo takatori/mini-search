@@ -40,6 +40,7 @@ func (index *Index) next(t string, current int) int {
 
 	var p []int
 	var ok bool
+	var low, high, jump int
 
 	if p, ok = index.Dictionary[t]; !ok {
 		return END_OF_FILE
@@ -56,13 +57,26 @@ func (index *Index) next(t string, current int) int {
 		return p[index.cache[t]]
 	}
 
-	if index.cache[t] > 0 && p[index.cache[t] - 1] > current {
-		index.cache[t] = 1
+	if index.cache[t] > 0 && p[index.cache[t] - 1] <= current {
+		low = index.cache[t] - 1
+	} else {
+		low = 0
 	}
 
-	for p[index.cache[t]] <= current {
-		index.cache[t] = index.cache[t] + 1
+	jump = 1
+	high = low + jump
+
+	for high < length && p[high] <= current {
+		low = high
+		jump = 2 * jump
+		high = low + jump
 	}
+
+	if high > length {
+		high = length
+	}
+
+	index.cache[t] = index.binarySearch(t, low, high, current)
 
 	return p[index.cache[t]]
 
