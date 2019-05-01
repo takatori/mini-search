@@ -99,21 +99,68 @@ func (index *Index) binarySearch(t string, low, high, current int) int {
 	return high
 }
 
+
+func (index *Index) binarySearchPrev(t string, low, high, current int) int {
+
+	for high-low > 1 {
+		mid := (low + high) / 2
+		if p, ok := index.Dictionary[t]; !ok {
+			return END_OF_FILE
+		} else {
+			if p[mid] < current {
+				low = mid
+			} else {
+				high = mid
+			}
+		}
+	}
+	return low
+}
+
+
 // prev(t, current) returns the position of t's last occurrence before the current position
 func (index *Index) prev(t string, current int) int {
 
-	if postingList, ok := index.Dictionary[t]; !ok {
-		return 0
-	} else {
-		for i := len(postingList) - 1; i >= 0; i-- {
-			p := postingList[i]
-			if p < current {
-				return p
-			}
-		}
+	var p []int
+	var ok bool
+	var low, high, jump int
+
+	if p, ok = index.Dictionary[t]; !ok {
 		return BEGINNING_OF_FILE
 	}
 
+	length := len(p)
+
+	if length == 0 || p[0] >= current {
+		return BEGINNING_OF_FILE
+	}
+
+	if p[length-1] < current {
+		index.cache[t] = length-1
+		return p[index.cache[t]]
+	}
+
+	if index.cache[t] > 0 && p[index.cache[t] + 1] >= current {
+		high = index.cache[t] + 1
+	} else {
+		high = length - 1
+	}
+
+	jump = 1
+	low = high - jump
+
+	for low > 0 && p[low] >= current {
+		high = low
+		jump = 2 * jump
+		low = high - jump
+	}
+
+	if low < 0 {
+		low = 0
+	}
+
+	index.cache[t] = index.binarySearchPrev(t, low, high, current)
+	return p[index.cache[t]]
 }
 
 // function to locate the first occurrence of a phrase after a given position
