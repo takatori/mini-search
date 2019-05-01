@@ -12,6 +12,7 @@ const (
 // schema independent index
 type Index struct {
 	Dictionary map[string][]int
+	cache map[string]int
 }
 
 // first(t) returns the first position at which the term  t occurs in the collection
@@ -51,10 +52,19 @@ func (index *Index) next(t string, current int) int {
 	}
 
 	if p[0] > current {
-		return p[0]
+		index.cache[t] = 0
+		return p[index.cache[t]]
 	}
 
-	return p[index.binarySearch(t, 0, length-1, current)]
+	if index.cache[t] > 0 && p[index.cache[t] - 1] > current {
+		index.cache[t] = 1
+	}
+
+	for p[index.cache[t]] <= current {
+		index.cache[t] = index.cache[t] + 1
+	}
+
+	return p[index.cache[t]]
 
 }
 
@@ -135,5 +145,6 @@ func (index *Index) allPhrase(phrase []string, current int) [][2]int {
 func NewIndex(dictionary map[string][]int) *Index {
 	index := new(Index)
 	index.Dictionary = dictionary
+	index.cache = make(map[string]int)
 	return index
 }
