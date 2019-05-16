@@ -9,56 +9,147 @@ const (
 	END_OF_FILE       = math.MaxInt32
 )
 
-// schema independent index
-type Index struct {
-	Dictionary map[string][]int
-	cache map[string]int
+var beginningPosition = &Position{
+	BEGINNING_OF_FILE,
+	BEGINNING_OF_FILE,
 }
 
-// first(t) returns the first position at which the term  t occurs in the collection
-func (index *Index) first(t string) int {
+var endPosition = &Position{
+	END_OF_FILE,
+	END_OF_FILE,
+}
 
-	if postingList, ok := index.Dictionary[t]; !ok {
+type Index struct {
+	dictionary map[string]*PostingsList
+	cache      map[string]int // TODO: move
+}
+
+type PostingsList struct {
+	list []*Posting
+}
+
+type Posting struct {
+	docId         int
+	termFrequency int
+	offsets       []int
+}
+
+type Position struct {
+	docId  int
+	offset int
+}
+
+func ComparePosition(p1, p2 *Position) int {
+	if (p1.docId > p2.docId) || (p1.docId == p2.docId && p1.offset > p2.offset) {
+		return 1
+	} else if p1.docId == p2.docId && p1.offset == p2.offset {
 		return 0
 	} else {
-		return postingList[0]
+		return -1
 	}
+}
+
+func (postingList *PostingsList) get(i int) *Position {
+
+	var sum int
+
+	for j, p := range postingList.list {
+		if sum+p.termFrequency > i {
+			return &Position{
+				postingList.list[j].docId,
+				postingList.list[j].offsets[i-sum],
+			}
+		}
+
+		sum += p.termFrequency
+	}
+
+	return nil
+}
+
+func (postingList *PostingsList) FirstPosition() *Position {
+
+	length := len(postingList.list)
+
+	if length == 0 {
+		return nil
+	}
+
+	return &Position{
+		postingList.list[0].docId,
+		postingList.list[0].offsets[0],
+	}
+}
+
+func (postingList *PostingsList) LastPosition() *Position {
+
+	length := len(postingList.list)
+
+	if length == 0 {
+		return nil
+	}
+
+	lastPosting := postingList.list[length-1]
+
+	return &Position{
+		lastPosting.docId,
+		lastPosting.offsets[len(lastPosting.offsets)-1],
+	}
+
+}
+
+// First(t) returns the first position at which the term  t occurs in the collection
+func (index *Index) First(t string) *Position {
+
+	if postingsList, ok := index.dictionary[t]; !ok {
+		return endPosition
+	} else {
+		return postingsList.FirstPosition()
+	}
+}
+
+func (index *Index) FirstDoc(t string) int {
+	return docId(index.First(t))
 }
 
 // last(t) returns the last position at which t occurs in collection
-func (index *Index) last(t string) int {
+func (index *Index) Last(t string) *Position {
 
-	if postingList, ok := index.Dictionary[t]; !ok {
-		return 0
+	if postingsList, ok := index.dictionary[t]; !ok {
+		return beginningPosition
 	} else {
-		return postingList[len(postingList)-1]
+		return postingsList.LastPosition()
 	}
 }
 
-// next(t, current) returns the position of t's first occurrence after the current position
-func (index *Index) next(t string, current int) int {
+func (index *Index) LastDoc(t string) int {
+	return docId(index.Last(t))
+}
 
-	var p []int
+// next(t, current) returns the position of t's first occurrence after the current position
+func (index *Index) Next(t string, current *Position) *Position {
+
+	var postingList *PostingsList
 	var ok bool
 	var low, high, jump int
 
-	if p, ok = index.Dictionary[t]; !ok {
-		return END_OF_FILE
+	if postingList, ok = index.dictionary[t]; !ok {
+		return endPosition
 	}
 
-	length := len(p)
+	length := len(postingList.list)
 
-	if length == 0 || p[length-1] <= current {
-		return END_OF_FILE
+	if length == 0 || ComparePosition(current, postingList.LastPosition()) > 0 {
+		return endPosition
 	}
 
-	if p[0] > current {
+	if ComparePosition(postingList.FirstPosition(), current) > 0 {
 		index.cache[t] = 0
-		return p[index.cache[t]]
+		return postingList.get(index.cache[t])
 	}
 
-	if index.cache[t] > 0 && p[index.cache[t] - 1] <= current {
-		low = index.cache[t] - 1
+	if index.cache[t] > 0 && ComparePosition(postingList.get(index.cache[t]), current) < 1 {
+		low = index.cache[t]
 	} else {
 		low = 0
 	}
@@ -66,7 +157,7 @@ func (index *Index) next(t string, current int) int {
 	jump = 1
 	high = low + jump
 
-	for high < length && p[high] <= current {
+	for high < length && ComparePosition(postingList.get(high), current) < 1 {
 		low = high
 		jump = 2 * jump
 		high = low + jump
@@ -78,18 +169,18 @@ func (index *Index) next(t string, current int) int {
 
 	index.cache[t] = index.binarySearch(t, low, high, current)
 
-	return p[index.cache[t]]
+	return postingList.get(index.cache[t])
 
 }
 
-func (index *Index) binarySearch(t string, low, high, current int) int {
+func (index *Index) binarySearch(t string, low, high int, current *Position) int {
 
 	for high-low > 1 {
 		mid := (low + high) / 2
-		if p, ok := index.Dictionary[t]; !ok {
+		if p, ok := index.dictionary[t]; !ok {
 			return END_OF_FILE
 		} else {
-			if p[mid] <= current {
+			if ComparePosition(p.get(mid), current) < 1 {
 				low = mid
 			} else {
 				high = mid
@@ -99,7 +190,7 @@ func (index *Index) binarySearch(t string, low, high, current int) int {
 	return high
 }
 
-
+/*
 func (index *Index) binarySearchPrev(t string, low, high, current int) int {
 
 	for high-low > 1 {
@@ -116,7 +207,6 @@ func (index *Index) binarySearchPrev(t string, low, high, current int) int {
 	}
 	return low
 }
-
 
 // prev(t, current) returns the position of t's last occurrence before the current position
 func (index *Index) prev(t string, current int) int {
@@ -136,11 +226,11 @@ func (index *Index) prev(t string, current int) int {
 	}
 
 	if p[length-1] < current {
-		index.cache[t] = length-1
+		index.cache[t] = length - 1
 		return p[index.cache[t]]
 	}
 
-	if index.cache[t] > 0 && p[index.cache[t] + 1] >= current {
+	if index.cache[t] > 0 && p[index.cache[t]+1] >= current {
 		high = index.cache[t] + 1
 	} else {
 		high = length - 1
@@ -189,8 +279,7 @@ func (index *Index) nextPhrase(phrase []string, current int) (int, int) {
 func (index *Index) allPhrase(phrase []string, current int) [][2]int {
 
 	var results [][2]int
-	var u int
-	var v int
+	var u, v int
 
 	u = current
 
@@ -202,10 +291,32 @@ func (index *Index) allPhrase(phrase []string, current int) [][2]int {
 	}
 	return results
 }
+*/
 
-func NewIndex(dictionary map[string][]int) *Index {
+func docId(position *Position) int {
+	return position.docId
+}
+func offset(position *Position) interface{} {
+	return position.offset
+}
+
+func NewIndex(dictionary map[string]*PostingsList) *Index {
 	index := new(Index)
-	index.Dictionary = dictionary
-	index.cache = make(map[string]int)
+	index.dictionary = dictionary
+	index.cache = make(map[string]int) // TODO: move query struct
 	return index
+}
+
+func NewPostingsList(list []*Posting) *PostingsList {
+	return &PostingsList{
+		list: list,
+	}
+}
+
+func NewPosting(docId int, offsets []int) *Posting {
+	return &Posting{
+		docId:         docId,
+		termFrequency: len(offsets),
+		offsets:       offsets,
+	}
 }
