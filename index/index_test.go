@@ -104,8 +104,6 @@ func TestLast(t *testing.T) {
 			}),
 	})
 
-
-
 	testCases := map[string]Position{
 		"thunder":  {37, 40000},
 		"witching": {8, 25805},
@@ -154,6 +152,7 @@ func TestNext(t *testing.T) {
 		"hurlybufly": NewPostingsList(
 			[]*Posting{
 				NewPosting(9, []int{30963}),
+				NewPosting(9, []int{40963}),
 				NewPosting(22, []int{293}),
 			}),
 		"thunder": NewPostingsList(
@@ -169,7 +168,6 @@ func TestNext(t *testing.T) {
 			}),
 	})
 
-
 	type test struct {
 		t        string
 		current  Position
@@ -177,9 +175,10 @@ func TestNext(t *testing.T) {
 	}
 
 	testCases := []test{
-		//{"witch", &Position{22, 288}, &Position{22, 310}},
-		{"hurlybufly", Position{9, 30963}, Position{22, 293}},
-		{"witch", Position{37, 10675}, Position{END_OF_FILE, END_OF_FILE}},
+		{"hurlybufly", Position{9, 30963}, Position{9, 40963}},
+		{"hurlybufly", Position{9, 40000}, Position{9, 40963}},
+		{"witch", Position{37, 10675}, Position{EndOfFile, EndOfFile}},
+		{"witch", Position{37, 12538}, Position{EndOfFile, EndOfFile}},
 	}
 
 	for _, testCase := range testCases {
@@ -191,97 +190,51 @@ func TestNext(t *testing.T) {
 
 }
 
-/*
 func TestPrev(t *testing.T) {
 
-	index := NewIndex(map[string][]int{
-		"hurlyburly": {316669, 745434},
-		"thunder":    {36898, 137236, 745397, 745419, 1247139},
-		"witch":      {1598, 27555, 745407, 745429, 745451, 745467, 1245276},
-		"witching":   {265197},
+	index := NewIndex(map[string]*PostingsList{
+		"hurlyburly": NewPostingsList(
+			[]*Posting{
+				NewPosting(9, []int{30963}),
+				NewPosting(22, []int{290}),
+				NewPosting(22, []int{293}),
+			}),
+		"thunder": NewPostingsList(
+			[]*Posting{
+				NewPosting(1, []int{36898}),
+				NewPosting(5, []int{6402}),
+				NewPosting(22, []int{256, 278}),
+				NewPosting(37, []int{12538}),
+			}),
+		"witch": NewPostingsList(
+			[]*Posting{
+				NewPosting(1, []int{1598, 27555}),
+				NewPosting(22, []int{266, 288, 310, 326}),
+				NewPosting(37, []int{10675}),
+			}),
+		"witching": NewPostingsList(
+			[]*Posting{
+				NewPosting(8, []int{25805}),
+			}),
 	})
 
 	type test struct {
 		t        string
-		current  int
-		expected int
+		current  Position
+		expected Position
 	}
 
 	testCases := []test{
-		{"witch", 745451, 745429},
-		{"hurlyburly", 456789, 316669},
-		{"witch", 1598, BEGINNING_OF_FILE},
-		{"witch", END_OF_FILE, 1245276},
-		{"witch", BEGINNING_OF_FILE, BEGINNING_OF_FILE},
-	}
-
-	for _, testCase := range testCases {
-		actual := index.prev(testCase.t, testCase.current)
-		if actual != testCase.expected {
-			t.Errorf("\n got: %v\n want: %v", actual, testCase.expected)
-		}
-	}
-
-}
-
-func TestNextPhrase(t *testing.T) {
-
-	index := NewIndex(map[string][]int{
-		"first": {2205, 2268, 745406, 745466, 745501, 1271487},
-		"witch": {1598, 27555, 745407, 745429, 745451, 745467, 745502, 1245276},
-	})
-
-	type test struct {
-		t             []string
-		current       int
-		expectedStart int
-		expectedEnd   int
-	}
-
-	testCases := []test{
-		{[]string{"first", "witch"}, BEGINNING_OF_FILE, 745406, 745407},
-		{[]string{"first", "witch"}, 745500, 745501, 745502},
-	}
-
-	for _, testCase := range testCases {
-		u, v := index.nextPhrase(testCase.t, testCase.current)
-		if u != testCase.expectedStart || v != testCase.expectedEnd {
-			t.Errorf("\n got: [%v, %v]\n want: [%v, %v]", u, v, testCase.expectedStart, testCase.expectedEnd)
-		}
-	}
-
-}
-
-func TestAllPhrase(t *testing.T) {
-
-	index := NewIndex(map[string][]int{
-		"first": {2205, 2268, 745406, 745466, 745501, 1271487},
-		"witch": {1598, 27555, 745407, 745429, 745451, 745467, 745502, 1245276},
-	})
-
-	type test struct {
-		t        []string
-		current  int
-		expected [][]int
-	}
-
-	testCases := []test{
-		{[]string{"first", "witch"},
-			BEGINNING_OF_FILE,
-			[][]int{
-				{745406, 745407},
-				{745466, 745467},
-				{745501, 745502},
-			},
-		},
+		{"hurlyburly", Position{22, 29309}, Position{22, 293}},
+		{"witch", Position{22, 310}, Position{22, 288}},
+		{"witch", Position{1, 1598}, Position{BeginningOfFile, BeginningOfFile}},
+		{"witch", Position{EndOfFile, EndOfFile}, Position{37, 10675}},
 	}
 	for _, testCase := range testCases {
-		results := index.allPhrase(testCase.t, testCase.current)
-		for i, result := range results {
-			if result[0] != testCase.expected[i][0] || result[1] != testCase.expected[i][1] {
-				t.Errorf("\n got: %v\n want: %v", result, testCase.expected[i])
-			}
+		actual := index.Prev(testCase.t, &testCase.current)
+		if *actual != testCase.expected {
+			t.Errorf("\n got: %v\n want: %v", *actual, testCase.expected)
 		}
 	}
 }
-*/
+
