@@ -24,10 +24,12 @@ func (idx *Index) Last(t string) *Position {
 	}
 }
 
+// return the docid of the first document containing the term t
 func (idx *Index) FirstDoc(t string) int {
 	return docId(idx.First(t))
 }
 
+// return the docid of the last document containing the term t
 func (idx *Index) LastDoc(t string) int {
 	return docId(idx.Last(t))
 }
@@ -35,11 +37,9 @@ func (idx *Index) LastDoc(t string) int {
 // next(t, current) returns the position of t's first occurrence after the current position
 func (idx *Index) Next(t string, current *Position) *Position {
 
-	var postingList *PostingsList
-	var ok bool
-	var low, high, jump int
+	postingList, ok := idx.dictionary[t];
 
-	if postingList, ok = idx.dictionary[t]; !ok {
+	if !ok {
 		return EOF
 	}
 
@@ -53,9 +53,9 @@ func (idx *Index) Next(t string, current *Position) *Position {
 		return postingList.get(0)
 	}
 
-	low = 0
-	jump = 1
-	high = low + jump
+	low := 0
+	jump := 1
+	high := low + jump
 
 	for high < length && ComparePosition(postingList.get(high), current) < 1 {
 		low = high
@@ -74,10 +74,9 @@ func (idx *Index) Next(t string, current *Position) *Position {
 // prev(t, current) returns the position of t's last occurrence before the current position
 func (idx *Index) Prev(t string, current *Position) *Position {
 
-	var postingList *PostingsList
-	var ok bool
+	postingList, ok := idx.dictionary[t];
 
-	if postingList, ok = idx.dictionary[t]; !ok {
+	if !ok {
 		return BOF
 	}
 
