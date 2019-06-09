@@ -2,7 +2,6 @@ package index
 
 type Index struct {
 	dictionary map[string]*PostingsList
-	cache      map[string]int // TODO: move
 }
 
 // First(t) returns the first position at which the term  t occurs in the collection
@@ -51,20 +50,10 @@ func (idx *Index) Next(t string, current *Position) *Position {
 	}
 
 	if ComparePosition(postingList.FirstPosition(), current) > 0 {
-		//idx.cache[t] = 0
-		//return postingList.get(idx.cache[t])
 		return postingList.get(0)
 	}
 
-	/*
-	if idx.cache[t] > 0 && ComparePosition(postingList.get(idx.cache[t]), current) < 1 {
-		low = idx.cache[t]
-	} else {
-		low = 0
-	}*/
-
 	low = 0
-
 	jump = 1
 	high = low + jump
 
@@ -77,10 +66,6 @@ func (idx *Index) Next(t string, current *Position) *Position {
 	if high > length {
 		high = length
 	}
-
-	//idx.cache[t] = idx.binarySearch(t, low, high, current)
-
-	//return postingList.get(idx.cache[t])
 
 	return postingList.get(idx.binarySearch(t, low, high, current))
 
@@ -103,17 +88,8 @@ func (idx *Index) Prev(t string, current *Position) *Position {
 	}
 
 	if ComparePosition(postingList.LastPosition(), current) < 0 {
-		//idx.cache[t] = length - 1
-		//return postingList.get(idx.cache[t])
 		return postingList.LastPosition()
 	}
-
-	/*
-	if idx.cache[t] > 0 && ComparePosition(current, postingList.get(idx.cache[t]+1)) < 0 {
-		high = idx.cache[t] + 1
-	} else {
-		high = length - 1
-	}*/
 
 	high := length - 1
 	jump := 1
@@ -128,10 +104,6 @@ func (idx *Index) Prev(t string, current *Position) *Position {
 	if low < 0 {
 		low = 0
 	}
-
-	// idx.cache[t] = idx.binarySearchPrev(t, low, high, current)
-
-	// return postingList.get(idx.cache[t])
 
 	return postingList.get(idx.binarySearchPrev(t, low, high, current))
 }
