@@ -50,7 +50,7 @@ func (idx *Index) Next(t string, current *Position) *Position {
 	}
 
 	if ComparePosition(postingList.FirstPosition(), current) > 0 {
-		return postingList.get(0)
+		return postingList.FirstPosition()
 	}
 
 	low := 0
