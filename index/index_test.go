@@ -190,6 +190,50 @@ func TestNext(t *testing.T) {
 
 }
 
+func TestNextDoc(t *testing.T) {
+
+	index := NewIndex(map[string]*PostingsList{
+		"hurlybufly": NewPostingsList(
+			[]*Posting{
+				NewPosting(9, []int{30963}),
+				NewPosting(9, []int{40963}),
+				NewPosting(22, []int{293}),
+			}),
+		"thunder": NewPostingsList(
+			[]*Posting{
+				NewPosting(1, []int{36898}),
+				NewPosting(5, []int{6402}),
+				NewPosting(22, []int{256, 278}),
+				NewPosting(37, []int{12538}),
+			}),
+		"witching": NewPostingsList(
+			[]*Posting{
+				NewPosting(8, []int{25805}),
+			}),
+	})
+
+	type test struct {
+		t        string
+		current  int
+		expected int
+	}
+
+	testCases := []test{
+		{"hurlybufly", 9, 22},
+		{"hurlybufly", 22, EndOfFile},
+		{"witching", BeginningOfFile, 8},
+	}
+
+	for _, testCase := range testCases {
+		actual := index.NextDoc(testCase.t, testCase.current)
+		if actual != testCase.expected {
+			t.Errorf("\n got: %v\n want: %v", actual, testCase.expected)
+		}
+	}
+
+}
+
+
 func TestPrev(t *testing.T) {
 
 	index := NewIndex(map[string]*PostingsList{
@@ -238,3 +282,50 @@ func TestPrev(t *testing.T) {
 	}
 }
 
+func TestPrevDoc(t *testing.T) {
+
+	index := NewIndex(map[string]*PostingsList{
+		"hurlyburly": NewPostingsList(
+			[]*Posting{
+				NewPosting(9, []int{30963}),
+				NewPosting(22, []int{290}),
+				NewPosting(22, []int{293}),
+			}),
+		"thunder": NewPostingsList(
+			[]*Posting{
+				NewPosting(1, []int{36898}),
+				NewPosting(5, []int{6402}),
+				NewPosting(22, []int{256, 278}),
+				NewPosting(37, []int{12538}),
+			}),
+		"witch": NewPostingsList(
+			[]*Posting{
+				NewPosting(1, []int{1598, 27555}),
+				NewPosting(22, []int{266, 288, 310, 326}),
+				NewPosting(37, []int{10675}),
+			}),
+		"witching": NewPostingsList(
+			[]*Posting{
+				NewPosting(8, []int{25805}),
+			}),
+	})
+
+	type test struct {
+		t        string
+		current  int
+		expected int
+	}
+
+	testCases := []test{
+		{"hurlyburly", 22, 9},
+		{"witch", 37, 22},
+		{"witch", 1, BeginningOfFile},
+		{"witch", EndOfFile, 37},
+	}
+	for _, testCase := range testCases {
+		actual := index.PrevDoc(testCase.t, testCase.current)
+		if actual != testCase.expected {
+			t.Errorf("\n got: %v\n want: %v", actual, testCase.expected)
+		}
+	}
+}

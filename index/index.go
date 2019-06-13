@@ -71,6 +71,10 @@ func (idx *Index) Next(t string, current *Position) *Position {
 
 }
 
+func (idx *Index) NextDoc(t string, current int) int {
+	return idx.Next(t, NewPosition(current, EndOfFile)).docId
+}
+
 // prev(t, current) returns the position of t's last occurrence before the current position
 func (idx *Index) Prev(t string, current *Position) *Position {
 
@@ -106,6 +110,11 @@ func (idx *Index) Prev(t string, current *Position) *Position {
 
 	return postingList.get(idx.binarySearchPrev(t, low, high, current))
 }
+
+func (idx *Index) PrevDoc(t string, current int) int {
+	return idx.Prev(t, NewPosition(current, BeginningOfFile)).docId
+}
+
 
 func (idx *Index) binarySearch(t string, low, high int, current *Position) int {
 
