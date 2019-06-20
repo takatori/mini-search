@@ -1,9 +1,11 @@
 package index
 
+import "math"
+
 type Posting struct {
 	docId         int
-	termFrequency int
 	offsets       []int
+	termFrequency int
 }
 
 type PostingsList struct {
@@ -37,6 +39,16 @@ func (l *PostingsList) get(i int) *Position {
 	return nil
 }
 
+func (l *PostingsList) getByDocId(docId int) *Posting {
+	// TODO: binary search
+	for _, posting := range l.list {
+		if posting.docId == docId {
+			return posting
+		}
+	}
+	return nil
+}
+
 func (l *PostingsList) FirstPosition() *Position {
 
 	if len(l.list) == 0 {
@@ -64,6 +76,14 @@ func (l *PostingsList) LastPosition() *Position {
 		lastPosting.offsets[len(lastPosting.offsets)-1],
 	}
 
+}
+func (l *PostingsList) tf(docId int) float64 {
+
+	if p := l.getByDocId(docId); p != nil && p.termFrequency > 0 {
+		return math.Log2(float64(p.termFrequency)) + 1
+	} else {
+		return 0
+	}
 }
 
 func NewPostingsList(list []*Posting) *PostingsList {

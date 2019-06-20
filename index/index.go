@@ -1,7 +1,43 @@
 package index
 
+import "math"
+
 type Index struct {
 	dictionary map[string]*PostingsList
+	docCount   int
+}
+
+// DocCount() return the number of document count
+func (idx *Index) DocCount() int {
+	return idx.docCount
+}
+
+// DocFrequency(t) return the number of term document count
+func (idx *Index) DocFrequency(t string) int {
+
+	if postingsList, ok := idx.dictionary[t]; !ok {
+		return 0
+	} else {
+		return postingsList.length()
+	}
+}
+
+func (idx *Index) TF(term string, docId int) float64 {
+	if postingsList, ok := idx.dictionary[term]; !ok {
+		return 0
+	} else {
+		return postingsList.tf(docId)
+	}
+}
+
+func (idx *Index) IDF(term string) float64 {
+	N := idx.DocCount()
+	Nt := idx.DocFrequency(term)
+	return math.Log2(float64(N) /float64(Nt))
+}
+
+func (idx *Index) TF_IDF(term string, docId int) float64 {
+	return idx.TF(term, docId) * idx.IDF(term)
 }
 
 // First(t) returns the first position at which the term  t occurs in the collection
@@ -38,7 +74,6 @@ func (idx *Index) LastDoc(t string) int {
 func (idx *Index) Next(t string, current *Position) *Position {
 
 	postingList, ok := idx.dictionary[t];
-
 	if !ok {
 		return EOF
 	}
@@ -79,7 +114,6 @@ func (idx *Index) NextDoc(t string, current int) int {
 func (idx *Index) Prev(t string, current *Position) *Position {
 
 	postingList, ok := idx.dictionary[t];
-
 	if !ok {
 		return BOF
 	}
@@ -114,7 +148,6 @@ func (idx *Index) Prev(t string, current *Position) *Position {
 func (idx *Index) PrevDoc(t string, current int) int {
 	return idx.Prev(t, NewPosition(current, BeginningOfFile)).docId
 }
-
 
 func (idx *Index) binarySearch(t string, low, high int, current *Position) int {
 
