@@ -1,6 +1,10 @@
 package index
 
-import "math"
+import (
+	"math"
+	"fmt"
+	"strings"
+)
 
 type Posting struct {
 	docId         int
@@ -8,8 +12,20 @@ type Posting struct {
 	termFrequency int
 }
 
+func (p Posting) String() string {
+	return fmt.Sprintf("<docId: %d, offsets:%v>", p.docId, p.offsets)
+}
+
 type PostingsList struct {
 	list []*Posting
+}
+
+func (l PostingsList) String() string {
+	str := make([]string, len(l.list))
+	for i, p := range l.list {
+		str[i] = p.String()
+	}
+	return strings.Join(str, " ")
 }
 
 func (l *PostingsList) length() int {

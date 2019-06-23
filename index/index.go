@@ -1,10 +1,37 @@
 package index
 
-import "math"
+import (
+	"math"
+	"sort"
+	"strings"
+	"fmt"
+)
 
 type Index struct {
 	dictionary map[string]*PostingsList
 	docCount   int
+}
+
+func (idx Index) String() string {
+
+	keys := make([]string, 0, len(idx.dictionary))
+
+	for k := range idx.dictionary {
+		keys = append(keys, k)
+	}
+
+	sort.Strings(keys)
+
+	str := make([]string, len(keys))
+
+	for i, k := range keys {
+		if postingList, ok := idx.dictionary[k]; ok {
+			str[i] = fmt.Sprintf("'%s'->[%s]", k, postingList.String())
+		}
+	}
+
+	return strings.Join(str, "\n")
+
 }
 
 // DocCount() return the number of document count
@@ -33,9 +60,10 @@ func (idx *Index) TF(term string, docId int) float64 {
 func (idx *Index) IDF(term string) float64 {
 	N := idx.DocCount()
 	Nt := idx.DocFrequency(term)
-	return math.Log2(float64(N) /float64(Nt))
+	return math.Log2(float64(N) / float64(Nt))
 }
 
+// TF_IDF(term, docId) return tf-idf score
 func (idx *Index) TF_IDF(term string, docId int) float64 {
 	return idx.TF(term, docId) * idx.IDF(term)
 }
