@@ -15,7 +15,6 @@ func TestIndexWriter(t *testing.T) {
 		"Well, sir",
 	}
 
-	// todo: macro
 	dictionary := map[string]*PostingsList{
 		"a":       {[]*Posting{{3, []int{13}, 1}}},
 		"am":      {[]*Posting{{3, []int{6}, 1}}},

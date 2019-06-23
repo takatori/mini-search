@@ -41,11 +41,10 @@ func (idx *Index) DocCount() int {
 
 // DocFrequency(t) return the number of term document count
 func (idx *Index) DocFrequency(t string) int {
-
 	if postingsList, ok := idx.dictionary[t]; !ok {
 		return 0
 	} else {
-		return postingsList.length()
+		return len(postingsList.list)
 	}
 }
 
