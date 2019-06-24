@@ -105,8 +105,6 @@ func RankCosine(idx *index.Index, terms []string, k int) []int {
 		return results[i].score > results[j].score
 	})
 
-	fmt.Println(results)
-
 	docIds := make([]int, len(results))
 	for i, r := range results {
 		docIds[i] = r.docId

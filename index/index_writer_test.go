@@ -48,6 +48,6 @@ func TestIndexWriter(t *testing.T) {
 	actual := writer.Commit()
 
 	if !reflect.DeepEqual(actual, expected) {
-		t.Errorf("got:\n%v\n ================\nwant:\n%v\n", actual, expected)
+		t.Errorf("wrong index. \n\nexpected: \n%v\n\n got:\n%v\n", actual, expected)
 	}
 }

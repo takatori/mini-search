@@ -16,6 +16,14 @@ func (p Posting) String() string {
 	return fmt.Sprintf("<docId: %d, offsets:%v>", p.docId, p.offsets)
 }
 
+func NewPosting(docId int, offsets []int) *Posting {
+	return &Posting{
+		docId:         docId,
+		termFrequency: len(offsets),
+		offsets:       offsets,
+	}
+}
+
 type PostingsList struct {
 	list []*Posting
 }
@@ -93,6 +101,7 @@ func (l *PostingsList) LastPosition() *Position {
 	}
 
 }
+
 func (l *PostingsList) tf(docId int) float64 {
 
 	if p := l.getByDocId(docId); p != nil && p.termFrequency > 0 {
@@ -105,13 +114,5 @@ func (l *PostingsList) tf(docId int) float64 {
 func NewPostingsList(list []*Posting) *PostingsList {
 	return &PostingsList{
 		list: list,
-	}
-}
-
-func NewPosting(docId int, offsets []int) *Posting {
-	return &Posting{
-		docId:         docId,
-		termFrequency: len(offsets),
-		offsets:       offsets,
 	}
 }

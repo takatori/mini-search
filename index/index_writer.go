@@ -9,17 +9,21 @@ type IndexWriter struct {
 	index *Index
 }
 
+func textToWordSequence(text string) []string {
+	text = strings.ToLower(text)
+	rep := regexp.MustCompile("[!,?.:]")
+	text = rep.ReplaceAllString(text, "")
+	return strings.Split(text, " ")
+}
+
 func (i *IndexWriter) AddDocument(doc string) {
+
 	i.index.docCount++
 	docId := i.index.docCount
 
-	doc = strings.ToLower(doc)
-	rep := regexp.MustCompile("[!,?.:]")
-	doc = rep.ReplaceAllString(doc, "")
-	terms := strings.Split(doc, " ")
-
-	for j, term := range terms {
+	for j, term := range textToWordSequence(doc) {
 		if postingsList, ok := i.index.dictionary[term]; ok {
+
 			if posting := postingsList.getByDocId(docId); posting != nil {
 				posting.offsets = append(posting.offsets, j+1)
 				posting.termFrequency++
@@ -30,6 +34,7 @@ func (i *IndexWriter) AddDocument(doc string) {
 					1,
 				})
 			}
+
 		} else {
 			i.index.dictionary[term] = &PostingsList{
 				[]*Posting{{docId, []int{j+1}, 1}},
