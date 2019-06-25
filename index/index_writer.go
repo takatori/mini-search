@@ -16,13 +16,17 @@ func textToWordSequence(text string) []string {
 	return strings.Split(text, " ")
 }
 
-func (i *IndexWriter) AddDocument(doc string) {
+func (iw *IndexWriter) getDocumentId() int {
+	return iw.index.docCount + 1
+}
 
-	i.index.docCount++
-	docId := i.index.docCount
+func (iw *IndexWriter) AddDocument(doc string) {
+
+	docId := iw.getDocumentId()
 
 	for j, term := range textToWordSequence(doc) {
-		if postingsList, ok := i.index.dictionary[term]; ok {
+
+		if postingsList, ok := iw.index.dictionary[term]; ok {
 
 			if posting := postingsList.getByDocId(docId); posting != nil {
 				posting.offsets = append(posting.offsets, j+1)
@@ -36,17 +40,20 @@ func (i *IndexWriter) AddDocument(doc string) {
 			}
 
 		} else {
-			i.index.dictionary[term] = &PostingsList{
+			iw.index.dictionary[term] = &PostingsList{
 				[]*Posting{{docId, []int{j+1}, 1}},
 			}
 		}
 	}
+
+	iw.index.docCount++
 }
 
-func (i *IndexWriter) Commit() *Index {
-	return i.index
+func (iw *IndexWriter) Commit() *Index {
+	return iw.index
 }
 
+// NewIndexWriter return new index writer
 func NewIndexWriter() *IndexWriter {
 	dict := make(map[string]*PostingsList)
 	index := &Index{
