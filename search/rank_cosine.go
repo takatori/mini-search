@@ -3,18 +3,8 @@ package search
 import (
 	"github.com/takatori/mini-search/index"
 	"sort"
-	"fmt"
 	"math"
 )
-
-type result struct {
-	docId int
-	score float64
-}
-
-func (r *result) String() string {
-	return fmt.Sprintf("{docId: %v, score: %v}", r.docId, r.score)
-}
 
 func cosineSim(v1, v2 []float64) float64 {
 
@@ -41,7 +31,6 @@ func docVector(idx *index.Index, terms []string, docId int) []float64 {
 
 	return dV
 }
-
 
 func queryVector(idx *index.Index, terms []string) []float64 {
 
