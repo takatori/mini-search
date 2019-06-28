@@ -7,6 +7,7 @@ import (
 	"fmt"
 )
 
+// Index is an inverted index.
 type Index struct {
 	dictionary map[string]*PostingsList
 	docCount   int
