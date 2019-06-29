@@ -12,7 +12,7 @@ func TestDocId(t *testing.T) {
 	}
 
 	for param, expected := range testCases {
-		actual := docId(param)
+		actual := DocId(param)
 		if actual != expected {
 			t.Errorf("\n got: %v\n want: %v", actual, expected)
 		}
@@ -27,7 +27,7 @@ func TestOffset(t *testing.T) {
 	}
 
 	for param, expected := range testCases {
-		actual := offset(param)
+		actual := Offset(param)
 		if actual != expected {
 			t.Errorf("\n got: %v\n want: %v", actual, expected)
 		}

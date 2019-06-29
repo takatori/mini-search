@@ -28,7 +28,11 @@ func (p *Position) Distance(p2 *Position) int {
 	if p.docId != p2.docId {
 		return math.MaxInt32 // TODO: fix
 	}
-	return p.offset - p2.offset
+	if p.offset - p2.offset > 0 {
+		return p.offset - p2.offset
+	} else {
+		return p2.offset - p.offset
+	}
 }
 
 func ComparePosition(p1, p2 *Position) int {
@@ -41,10 +45,10 @@ func ComparePosition(p1, p2 *Position) int {
 	}
 }
 
-func docId(position *Position) int {
+func DocId(position *Position) int {
 	return position.docId
 }
-func offset(position *Position) int {
+func Offset(position *Position) int {
 	return position.offset
 }
 

@@ -13,7 +13,7 @@ type Posting struct {
 }
 
 func (p Posting) String() string {
-	return fmt.Sprintf("<docId: %d, offsets:%v>", p.docId, p.offsets)
+	return fmt.Sprintf("<DocId: %d, offsets:%v>", p.docId, p.offsets)
 }
 
 func NewPosting(docId int, offsets []int) *Posting {

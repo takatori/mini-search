@@ -63,7 +63,7 @@ func (idx *Index) IDF(term string) float64 {
 	return math.Log2(float64(N) / float64(Nt))
 }
 
-// TF_IDF(term, docId) return tf-idf score
+// TF_IDF(term, DocId) return tf-idf score
 func (idx *Index) TF_IDF(term string, docId int) float64 {
 	return idx.TF(term, docId) * idx.IDF(term)
 }
@@ -90,12 +90,12 @@ func (idx *Index) Last(t string) *Position {
 
 // return the docid of the first document containing the term t
 func (idx *Index) FirstDoc(t string) int {
-	return docId(idx.First(t))
+	return DocId(idx.First(t))
 }
 
 // return the docid of the last document containing the term t
 func (idx *Index) LastDoc(t string) int {
-	return docId(idx.Last(t))
+	return DocId(idx.Last(t))
 }
 
 // next(t, current) returns the position of t's first occurrence after the current position

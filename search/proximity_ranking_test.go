@@ -29,7 +29,7 @@ func TestProxymityRanking(t *testing.T) {
 
 	actual := RankProximity(idx, terms, 10)
 
-	expected := []int{3,1}
+	expected := []int{1, 2}
 
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("got: %v, want: %v", actual, expected)
