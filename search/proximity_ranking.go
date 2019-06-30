@@ -2,7 +2,6 @@ package search
 
 import (
 	"github.com/takatori/mini-search/index"
-	"sort"
 )
 
 func nextCover(idx *index.Index, terms []string, p *index.Position) (*index.Position, *index.Position) {
@@ -38,7 +37,7 @@ func nextCover(idx *index.Index, terms []string, p *index.Position) (*index.Posi
 
 func RankProximity(idx *index.Index, terms []string, k int) []int {
 
-	results := make([]*result, 0, k)
+	results := make(SearchResults, 0, k)
 	v, u := nextCover(idx, terms, index.BOF)
 	d := index.DocId(u)
 	score := 0.0
@@ -62,13 +61,6 @@ func RankProximity(idx *index.Index, terms []string, k int) []int {
 		})
 	}
 
-	sort.Slice(results, func(i, j int) bool {
-		return results[i].score > results[j].score
-	})
-
-	docIds := make([]int, len(results))
-	for i, r := range results {
-		docIds[i] = r.docId
-	}
-	return docIds
+	results.Sort()
+	return results.DocIds()
 }
