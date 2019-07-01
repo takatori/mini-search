@@ -2,7 +2,6 @@ package search
 
 import (
 	"github.com/takatori/mini-search/index"
-	"sort"
 	"math"
 )
 
@@ -78,25 +77,14 @@ func nextMinDoc(idx *index.Index, terms []string, docId int) int {
 
 func RankCosine(idx *index.Index, terms []string, k int) []int {
 
-	results := make([]*result, 0, k)
+	results := make(SearchResults, 0, k)
 	d := nextMinDoc(idx, terms, index.BeginningOfFile)
 	qV := queryVector(idx, terms)
 
 	for i := 0; d < index.EndOfFile && i < k; i++ {
-		results = append(results, &result{
-			docId: d,
-			score: cosineSim(qV, docVector(idx, terms, d)),
-		})
+		results = results.AddResult(d, cosineSim(qV, docVector(idx, terms, d)))
 		d = nextMinDoc(idx, terms, d)
 	}
-
-	sort.Slice(results, func(i, j int) bool {
-		return results[i].score > results[j].score
-	})
-
-	docIds := make([]int, len(results))
-	for i, r := range results {
-		docIds[i] = r.docId
-	}
-	return docIds
+	
+	return results.Sort().DocIds()
 }

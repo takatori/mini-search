@@ -18,10 +18,11 @@ func (r *result) String() string {
 
 type SearchResults []*result
 
-func (results SearchResults) Sort() {
+func (results SearchResults) Sort() SearchResults {
 	sort.Slice(results, func(i, j int) bool {
 		return results[i].score > results[j].score
 	})
+	return results
 }
 
 func (results SearchResults) DocIds() []int {
@@ -32,3 +33,11 @@ func (results SearchResults) DocIds() []int {
 	}
 	return docIds
 }
+
+func (results SearchResults) AddResult(d int, score float64) SearchResults {
+	return append(results, &result{
+		d,
+		score,
+	})
+}
+

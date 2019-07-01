@@ -44,10 +44,7 @@ func RankProximity(idx *index.Index, terms []string, k int) []int {
 
 	for index.ComparePosition(index.EOF, u) > 0 {
 		if d < index.DocId(u) {
-			results = append(results, &result{
-				d,
-				score,
-			})
+			results = results.AddResult(d, score)
 			d = index.DocId(u)
 			score = 0
 		}
@@ -55,12 +52,8 @@ func RankProximity(idx *index.Index, terms []string, k int) []int {
 		u, v = nextCover(idx, terms, u)
 	}
 	if d < index.EndOfFile {
-		results = append(results, &result{
-			d,
-			score,
-		})
+		results = results.AddResult(d, score)
 	}
 
-	results.Sort()
-	return results.DocIds()
+	return results.Sort().DocIds()
 }
