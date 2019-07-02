@@ -4,9 +4,10 @@ import (
 	"math"
 )
 
+// Position represents a position of term in a document.
 type Position struct {
-	docId  int
-	offset int
+	docId  int // document Id
+	offset int // offset from the beginning of the document
 }
 
 const (
@@ -24,15 +25,20 @@ var EOF = &Position{
 	EndOfFile,
 }
 
+// Distance(p) returns a distance between two position.
 func (p *Position) Distance(p2 *Position) int {
+
 	if p.docId != p2.docId {
-		return math.MaxInt32 // TODO: fix
+		return math.MaxInt32
 	}
-	if p.offset - p2.offset > 0 {
-		return p.offset - p2.offset
-	} else {
-		return p2.offset - p.offset
+
+	distance := p.offset - p2.offset
+
+	if distance < 0 {
+		return -distance
 	}
+
+	return distance
 }
 
 func ComparePosition(p1, p2 *Position) int {
@@ -52,6 +58,7 @@ func Offset(position *Position) int {
 	return position.offset
 }
 
+// NewPosition return a new position.
 func NewPosition(docId, offset int) *Position {
 	return &Position{docId, offset}
 }
