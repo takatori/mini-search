@@ -9,7 +9,7 @@ import (
 
 // Index is an inverted index.
 type Index struct {
-	dictionary map[string]*PostingsList
+	dictionary map[string]PostingsList
 	docCount   int
 }
 
@@ -45,7 +45,7 @@ func (idx *Index) DocFrequency(t string) int {
 	if postingsList, ok := idx.dictionary[t]; !ok {
 		return 0
 	} else {
-		return len(postingsList.list)
+		return len(postingsList)
 	}
 }
 

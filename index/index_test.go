@@ -36,16 +36,14 @@ func TestOffset(t *testing.T) {
 
 func TestFirst(t *testing.T) {
 
-	index := NewIndex(map[string]*PostingsList{
-		"hurlybufly": NewPostingsList(
-			[]*Posting{
-				NewPosting(9, []int{30963}),
-				NewPosting(22, []int{293}),
-			}),
-		"witching": NewPostingsList(
-			[]*Posting{
-				NewPosting(8, []int{25805}),
-			}),
+	index := NewIndex(map[string]PostingsList{
+		"hurlybufly": []*Posting{
+			NewPosting(9, []int{30963}),
+			NewPosting(22, []int{293}),
+		},
+		"witching": []*Posting{
+			NewPosting(8, []int{25805}),
+		},
 	})
 
 	testCases := map[string]Position{
@@ -63,16 +61,14 @@ func TestFirst(t *testing.T) {
 
 func TestFirstDoc(t *testing.T) {
 
-	index := NewIndex(map[string]*PostingsList{
-		"hurlybufly": NewPostingsList(
-			[]*Posting{
-				NewPosting(9, []int{30963}),
-				NewPosting(22, []int{293}),
-			}),
-		"witching": NewPostingsList(
-			[]*Posting{
-				NewPosting(8, []int{25805}),
-			}),
+	index := NewIndex(map[string]PostingsList{
+		"hurlybufly": []*Posting{
+			NewPosting(9, []int{30963}),
+			NewPosting(22, []int{293}),
+		},
+		"witching": []*Posting{
+			NewPosting(8, []int{25805}),
+		},
 	})
 
 	testCases := map[string]int{
@@ -90,18 +86,16 @@ func TestFirstDoc(t *testing.T) {
 
 func TestLast(t *testing.T) {
 
-	index := NewIndex(map[string]*PostingsList{
-		"thunder": NewPostingsList(
-			[]*Posting{
-				NewPosting(1, []int{36898}),
-				NewPosting(5, []int{6402}),
-				NewPosting(22, []int{256, 278}),
-				NewPosting(37, []int{12538, 40000}),
-			}),
-		"witching": NewPostingsList(
-			[]*Posting{
-				NewPosting(8, []int{25805}),
-			}),
+	index := NewIndex(map[string]PostingsList{
+		"thunder": []*Posting{
+			NewPosting(1, []int{36898}),
+			NewPosting(5, []int{6402}),
+			NewPosting(22, []int{256, 278}),
+			NewPosting(37, []int{12538, 40000}),
+		},
+		"witching": []*Posting{
+			NewPosting(8, []int{25805}),
+		},
 	})
 
 	testCases := map[string]Position{
@@ -119,18 +113,16 @@ func TestLast(t *testing.T) {
 
 func TestLastDoc(t *testing.T) {
 
-	index := NewIndex(map[string]*PostingsList{
-		"thunder": NewPostingsList(
-			[]*Posting{
-				NewPosting(1, []int{36898}),
-				NewPosting(5, []int{6402}),
-				NewPosting(22, []int{256, 278}),
-				NewPosting(37, []int{12538}),
-			}),
-		"witching": NewPostingsList(
-			[]*Posting{
-				NewPosting(8, []int{25805}),
-			}),
+	index := NewIndex(map[string]PostingsList{
+		"thunder": []*Posting{
+			NewPosting(1, []int{36898}),
+			NewPosting(5, []int{6402}),
+			NewPosting(22, []int{256, 278}),
+			NewPosting(37, []int{12538}),
+		},
+		"witching": []*Posting{
+			NewPosting(8, []int{25805}),
+		},
 	})
 
 	testCases := map[string]int{
@@ -148,24 +140,21 @@ func TestLastDoc(t *testing.T) {
 
 func TestNext(t *testing.T) {
 
-	index := NewIndex(map[string]*PostingsList{
-		"hurlybufly": NewPostingsList(
-			[]*Posting{
-				NewPosting(9, []int{30963}),
-				NewPosting(9, []int{40963}),
-				NewPosting(22, []int{293}),
-			}),
-		"thunder": NewPostingsList(
-			[]*Posting{
-				NewPosting(1, []int{36898}),
-				NewPosting(5, []int{6402}),
-				NewPosting(22, []int{256, 278}),
-				NewPosting(37, []int{12538}),
-			}),
-		"witching": NewPostingsList(
-			[]*Posting{
-				NewPosting(8, []int{25805}),
-			}),
+	index := NewIndex(map[string]PostingsList{
+		"hurlybufly": []*Posting{
+			NewPosting(9, []int{30963}),
+			NewPosting(9, []int{40963}),
+			NewPosting(22, []int{293}),
+		},
+		"thunder": []*Posting{
+			NewPosting(1, []int{36898}),
+			NewPosting(5, []int{6402}),
+			NewPosting(22, []int{256, 278}),
+			NewPosting(37, []int{12538}),
+		},
+		"witching": []*Posting{
+			NewPosting(8, []int{25805}),
+		},
 	})
 
 	type test struct {
@@ -192,24 +181,21 @@ func TestNext(t *testing.T) {
 
 func TestNextDoc(t *testing.T) {
 
-	index := NewIndex(map[string]*PostingsList{
-		"hurlybufly": NewPostingsList(
-			[]*Posting{
-				NewPosting(9, []int{30963}),
-				NewPosting(9, []int{40963}),
-				NewPosting(22, []int{293}),
-			}),
-		"thunder": NewPostingsList(
-			[]*Posting{
-				NewPosting(1, []int{36898}),
-				NewPosting(5, []int{6402}),
-				NewPosting(22, []int{256, 278}),
-				NewPosting(37, []int{12538}),
-			}),
-		"witching": NewPostingsList(
-			[]*Posting{
-				NewPosting(8, []int{25805}),
-			}),
+	index := NewIndex(map[string]PostingsList{
+		"hurlybufly": []*Posting{
+			NewPosting(9, []int{30963}),
+			NewPosting(9, []int{40963}),
+			NewPosting(22, []int{293}),
+		},
+		"thunder": []*Posting{
+			NewPosting(1, []int{36898}),
+			NewPosting(5, []int{6402}),
+			NewPosting(22, []int{256, 278}),
+			NewPosting(37, []int{12538}),
+		},
+		"witching": []*Posting{
+			NewPosting(8, []int{25805}),
+		},
 	})
 
 	type test struct {
@@ -233,33 +219,28 @@ func TestNextDoc(t *testing.T) {
 
 }
 
-
 func TestPrev(t *testing.T) {
 
-	index := NewIndex(map[string]*PostingsList{
-		"hurlyburly": NewPostingsList(
-			[]*Posting{
-				NewPosting(9, []int{30963}),
-				NewPosting(22, []int{290}),
-				NewPosting(22, []int{293}),
-			}),
-		"thunder": NewPostingsList(
-			[]*Posting{
-				NewPosting(1, []int{36898}),
-				NewPosting(5, []int{6402}),
-				NewPosting(22, []int{256, 278}),
-				NewPosting(37, []int{12538}),
-			}),
-		"witch": NewPostingsList(
-			[]*Posting{
-				NewPosting(1, []int{1598, 27555}),
-				NewPosting(22, []int{266, 288, 310, 326}),
-				NewPosting(37, []int{10675}),
-			}),
-		"witching": NewPostingsList(
-			[]*Posting{
-				NewPosting(8, []int{25805}),
-			}),
+	index := NewIndex(map[string]PostingsList{
+		"hurlyburly": []*Posting{
+			NewPosting(9, []int{30963}),
+			NewPosting(22, []int{290}),
+			NewPosting(22, []int{293}),
+		},
+		"thunder": []*Posting{
+			NewPosting(1, []int{36898}),
+			NewPosting(5, []int{6402}),
+			NewPosting(22, []int{256, 278}),
+			NewPosting(37, []int{12538}),
+		},
+		"witch": []*Posting{
+			NewPosting(1, []int{1598, 27555}),
+			NewPosting(22, []int{266, 288, 310, 326}),
+			NewPosting(37, []int{10675}),
+		},
+		"witching": []*Posting{
+			NewPosting(8, []int{25805}),
+		},
 	})
 
 	type test struct {
@@ -284,30 +265,26 @@ func TestPrev(t *testing.T) {
 
 func TestPrevDoc(t *testing.T) {
 
-	index := NewIndex(map[string]*PostingsList{
-		"hurlyburly": NewPostingsList(
-			[]*Posting{
-				NewPosting(9, []int{30963}),
-				NewPosting(22, []int{290}),
-				NewPosting(22, []int{293}),
-			}),
-		"thunder": NewPostingsList(
-			[]*Posting{
-				NewPosting(1, []int{36898}),
-				NewPosting(5, []int{6402}),
-				NewPosting(22, []int{256, 278}),
-				NewPosting(37, []int{12538}),
-			}),
-		"witch": NewPostingsList(
-			[]*Posting{
-				NewPosting(1, []int{1598, 27555}),
-				NewPosting(22, []int{266, 288, 310, 326}),
-				NewPosting(37, []int{10675}),
-			}),
-		"witching": NewPostingsList(
-			[]*Posting{
-				NewPosting(8, []int{25805}),
-			}),
+	index := NewIndex(map[string]PostingsList{
+		"hurlyburly": []*Posting{
+			NewPosting(9, []int{30963}),
+			NewPosting(22, []int{290}),
+			NewPosting(22, []int{293}),
+		},
+		"thunder": []*Posting{
+			NewPosting(1, []int{36898}),
+			NewPosting(5, []int{6402}),
+			NewPosting(22, []int{256, 278}),
+			NewPosting(37, []int{12538}),
+		},
+		"witch": []*Posting{
+			NewPosting(1, []int{1598, 27555}),
+			NewPosting(22, []int{266, 288, 310, 326}),
+			NewPosting(37, []int{10675}),
+		},
+		"witching": []*Posting{
+			NewPosting(8, []int{25805}),
+		},
 	})
 
 	type test struct {

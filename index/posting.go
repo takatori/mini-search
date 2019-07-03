@@ -24,36 +24,34 @@ func NewPosting(docId int, offsets []int) *Posting {
 	}
 }
 
-type PostingsList struct {
-	list []*Posting
-}
+type PostingsList []*Posting
 
-func (l PostingsList) String() string {
-	str := make([]string, len(l.list))
-	for i, p := range l.list {
+func (pl PostingsList) String() string {
+	str := make([]string, len(pl))
+	for i, p := range pl {
 		str[i] = p.String()
 	}
 	return strings.Join(str, " ")
 }
 
-func (l *PostingsList) length() int {
+func (pl PostingsList) length() int {
 
 	n := 0
-	for _, p := range l.list {
+	for _, p := range pl {
 		n += len(p.offsets)
 	}
 	return n
 }
 
-func (l *PostingsList) get(i int) *Position {
+func (pl PostingsList) get(i int) *Position {
 
 	var sum int
 
-	for j, p := range l.list {
+	for j, p := range pl {
 		if sum+p.termFrequency > i {
 			return &Position{
-				l.list[j].docId,
-				l.list[j].offsets[i-sum],
+				pl[j].docId,
+				pl[j].offsets[i-sum],
 			}
 		}
 
@@ -63,9 +61,9 @@ func (l *PostingsList) get(i int) *Position {
 	return nil
 }
 
-func (l *PostingsList) getByDocId(docId int) *Posting {
+func (pl PostingsList) getByDocId(docId int) *Posting {
 	// TODO: binary search
-	for _, posting := range l.list {
+	for _, posting := range pl {
 		if posting.docId == docId {
 			return posting
 		}
@@ -73,27 +71,27 @@ func (l *PostingsList) getByDocId(docId int) *Posting {
 	return nil
 }
 
-func (l *PostingsList) FirstPosition() *Position {
+func (pl PostingsList) FirstPosition() *Position {
 
-	if len(l.list) == 0 {
+	if len(pl) == 0 {
 		return nil
 	}
 
 	return &Position{
-		l.list[0].docId,
-		l.list[0].offsets[0],
+		pl[0].docId,
+		pl[0].offsets[0],
 	}
 }
 
-func (l *PostingsList) LastPosition() *Position {
+func (pl PostingsList) LastPosition() *Position {
 
-	length := len(l.list)
+	length := len(pl)
 
 	if length == 0 {
 		return nil
 	}
 
-	lastPosting := l.list[length-1]
+	lastPosting := pl[length-1]
 
 	return &Position{
 		lastPosting.docId,
@@ -108,11 +106,5 @@ func (l *PostingsList) tf(docId int) float64 {
 		return math.Log2(float64(p.termFrequency)) + 1
 	} else {
 		return 0
-	}
-}
-
-func NewPostingsList(list []*Posting) *PostingsList {
-	return &PostingsList{
-		list: list,
 	}
 }

@@ -7,19 +7,17 @@ import (
 
 func TestNextPhrase(t *testing.T) {
 
-	idx := index.NewIndex(map[string]*index.PostingsList{
-		"first": index.NewPostingsList(
-			[]*index.Posting{
-				index.NewPosting(1, []int{2205, 2268, 745406, 745466, 745501, 1271487}),
-				index.NewPosting(22, []int{265, 235, 360}),
-				index.NewPosting(37, []int{36886}),
-			}),
-		"witch": index.NewPostingsList(
-			[]*index.Posting{
-				index.NewPosting(1, []int{1598, 27555, 745407, 745429, 745451, 745467, 745502, 1274527}),
-				index.NewPosting(22, []int{266, 288, 310, 326}),
-				index.NewPosting(37, []int{10675}),
-			}),
+	idx := index.NewIndex(map[string]index.PostingsList{
+		"first": []*index.Posting{
+			index.NewPosting(1, []int{2205, 2268, 745406, 745466, 745501, 1271487}),
+			index.NewPosting(22, []int{265, 235, 360}),
+			index.NewPosting(37, []int{36886}),
+		},
+		"witch": []*index.Posting{
+			index.NewPosting(1, []int{1598, 27555, 745407, 745429, 745451, 745467, 745502, 1274527}),
+			index.NewPosting(22, []int{266, 288, 310, 326}),
+			index.NewPosting(37, []int{10675}),
+		},
 	})
 
 	type test struct {
@@ -53,19 +51,17 @@ func TestNextPhrase(t *testing.T) {
 
 func TestPhraseSearch(t *testing.T) {
 
-	idx := index.NewIndex(map[string]*index.PostingsList{
-		"first": index.NewPostingsList(
-			[]*index.Posting{
-				index.NewPosting(1, []int{2205, 2268, 745406, 745466, 745501, 1271487}),
-				index.NewPosting(22, []int{265, 235, 360}),
-				index.NewPosting(37, []int{36886}),
-			}),
-		"witch": index.NewPostingsList(
-			[]*index.Posting{
-				index.NewPosting(1, []int{1598, 27555, 745407, 745429, 745451, 745467, 745502, 1274527}),
-				index.NewPosting(22, []int{266, 288, 310, 326}),
-				index.NewPosting(37, []int{10675}),
-			}),
+	idx := index.NewIndex(map[string]index.PostingsList{
+		"first": []*index.Posting{
+			index.NewPosting(1, []int{2205, 2268, 745406, 745466, 745501, 1271487}),
+			index.NewPosting(22, []int{265, 235, 360}),
+			index.NewPosting(37, []int{36886}),
+		},
+		"witch": []*index.Posting{
+			index.NewPosting(1, []int{1598, 27555, 745407, 745429, 745451, 745467, 745502, 1274527}),
+			index.NewPosting(22, []int{266, 288, 310, 326}),
+			index.NewPosting(37, []int{10675}),
+		},
 	})
 
 	type test struct {
