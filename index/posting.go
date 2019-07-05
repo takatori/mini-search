@@ -100,9 +100,9 @@ func (pl PostingsList) LastPosition() *Position {
 
 }
 
-func (l *PostingsList) tf(docId int) float64 {
+func (pl PostingsList) tf(docId int) float64 {
 
-	if p := l.getByDocId(docId); p != nil && p.termFrequency > 0 {
+	if p := pl.getByDocId(docId); p != nil && p.termFrequency > 0 {
 		return math.Log2(float64(p.termFrequency)) + 1
 	} else {
 		return 0
