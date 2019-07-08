@@ -29,9 +29,9 @@ func nextCover(idx *index.Index, terms []string, p *index.Position) (*index.Posi
 
 	if index.DocId(u) == index.DocId(v) {
 		return u, v
-	} else {
-		return nextCover(idx, terms, u)
 	}
+
+	return nextCover(idx, terms, u)
 
 }
 

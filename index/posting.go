@@ -104,7 +104,7 @@ func (pl PostingsList) tf(docId int) float64 {
 
 	if p := pl.getByDocId(docId); p != nil && p.termFrequency > 0 {
 		return math.Log2(float64(p.termFrequency)) + 1
-	} else {
-		return 0
 	}
+
+	return 0
 }
